@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Track Mind – جامعة أم القرى، الزاهر</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#eef1ee;--fg:#16231f;--card:#fff;--mut:#5d6b66;--acc:#0b7a5a;--acc2:#e8f4ef;--room:#fff;--hall:#dfe7e3;--line:#c5cfca;--shop:#fde7c7;--route:#1a73e8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#121a17;--fg:#e8efec;--card:#1c2824;--mut:#9aaaa4;--acc:#3ccf9f;--acc2:#1d3a31;--room:#24332e;--hall:#2c3d37;--line:#3b4d46;--shop:#4a3a20;--route:#6ea8ff}}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;background:var(--bg);color:var(--fg);overflow:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.screen{position:fixed;inset:0;display:none;flex-direction:column}.screen.on{display:flex}
+#splash{align-items:center;justify-content:center;background:var(--acc);color:#fff;text-align:center;padding:24px;gap:10px}
+#splash h1{font-size:44px;margin:0;letter-spacing:1px;direction:ltr}
+#splash p{margin:0;opacity:.9}
+.btn{background:var(--acc);color:#fff;border:0;border-radius:24px;padding:12px 24px;font-weight:700}
+#splash .btn{background:#fff;color:var(--acc);margin-top:24px}
+.ghost{background:var(--card);color:var(--fg);border:1px solid var(--line)}
+#mapwrap{flex:1;position:relative;touch-action:none;overflow:hidden;background:var(--bg)}
+svg#map{width:100%;height:100%;display:block}
+#ttl{position:absolute;top:8px;inset-inline:0;text-align:center;font-weight:700;font-size:20px;color:var(--acc);direction:ltr;z-index:5;pointer-events:none}
+.top{position:absolute;top:44px;inset-inline:10px;display:flex;gap:8px;z-index:5}
+.top input{flex:1;border:0;border-radius:24px;padding:12px 18px;font:inherit;background:var(--card);color:var(--fg);box-shadow:0 2px 8px #0003}
+.circle{width:44px;height:44px;border-radius:50%;border:0;background:var(--card);box-shadow:0 2px 8px #0003;font-size:18px}
+#res{position:absolute;top:138px;inset-inline:10px;background:var(--card);border-radius:14px;box-shadow:0 4px 14px #0003;z-index:6;max-height:40%;overflow:auto;display:none}
+#res button{display:block;width:100%;text-align:start;background:none;border:0;padding:12px 16px;border-bottom:1px solid var(--line)}
+#floors{position:absolute;inset-inline-start:10px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;background:var(--card);border-radius:14px;box-shadow:0 2px 8px #0003;z-index:5;overflow:hidden}
+#floors button{border:0;background:none;padding:12px 14px;font-weight:600;min-width:62px}
+#floors button.on{background:var(--acc);color:#fff}
+#sheet{position:absolute;bottom:0;inset-inline:0;background:var(--card);border-radius:20px 20px 0 0;box-shadow:0 -4px 16px #0004;padding:16px;z-index:7;transform:translateY(110%);transition:transform .25s;max-height:70%;overflow:auto}
+#sheet.on{transform:none}
+.ph{height:110px;border-radius:12px;background:linear-gradient(135deg,var(--shop),var(--acc2));display:flex;align-items:center;justify-content:center;font-size:44px;margin-bottom:10px}
+#sheet h2{margin:0 0 4px}.mut{color:var(--mut);font-size:14px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.chip{background:var(--acc2);border-radius:14px;padding:4px 10px;font-size:13px}
+#dir{position:absolute;top:138px;inset-inline:10px;background:var(--acc);color:#fff;border-radius:14px;padding:12px 16px;z-index:5;display:none}
+.modal{position:fixed;inset:0;background:#000a;z-index:20;display:none;align-items:center;justify-content:center;padding:20px}
+.modal.on{display:flex}
+.box{background:var(--card);border-radius:20px;padding:22px;max-width:420px;width:100%;max-height:90%;overflow:auto;text-align:center}
+.box .ic{font-size:46px}.dots{display:flex;gap:6px;justify-content:center;margin:12px}.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}.dots i.on{background:var(--acc)}
+.rm{fill:var(--room);stroke:var(--line);stroke-width:2;cursor:pointer}.rm:hover,.rm.sel{fill:var(--acc2);stroke:var(--acc)}
+.rm.shop{fill:var(--shop)}
+.hall{fill:var(--hall)}
+.lbl{font-size:13px;fill:var(--fg);text-anchor:middle;pointer-events:none;font-family:inherit}
+#toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:20px;z-index:30;display:none;font-size:14px}
+.mermaid{direction:ltr;text-align:center}
+.chip.ok{background:#d6f3e4;color:#0a6a49}.chip.no{background:#fde0e0;color:#a12020}
+.tb{width:100%;border-collapse:collapse;margin:6px 0}.tb td{padding:7px 4px;border-bottom:1px solid var(--line)}.tb td:last-child{text-align:left;font-weight:600}
+#dir{max-height:30%;overflow:auto}#dir ol{margin:6px 0 0;padding-inline-start:20px;font-size:14px}
+#floors .bd{background:var(--acc2);border-bottom:1px solid var(--line)}#floors .bd.on{background:var(--fg);color:var(--card)}
+#cats{position:absolute;top:94px;inset-inline:10px;display:flex;gap:6px;overflow-x:auto;z-index:5;padding-bottom:4px}#cats button{white-space:nowrap;border:0;border-radius:16px;padding:6px 12px;background:var(--card);box-shadow:0 1px 4px #0003;font-size:13px}.badge{border-radius:12px;padding:3px 10px;font-size:13px;font-weight:700}.badge.ok{background:#1f9d6e33;color:var(--acc)}.badge.no{background:#d9383833;color:#d93838}.mr{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--line)}.rm.doc{fill:var(--acc2)}
+</style>
+</head>
+<body>
+<section id="splash" class="screen on">
+  <h1>Track Mind</h1>
+  <p>دليلك داخل جامعة أم القرى – الزاهر</p>
+  <button class="btn" id="start">ابدأ</button>
+</section>
+
+<section id="app" class="screen">
+  <div id="mapwrap">
+    <svg id="map"><g id="vp"></g></svg>
+    <div id="ttl">Track Mind</div>
+    <div class="top">
+      <input id="q" placeholder="ابحث عن قاعة أو مطعم… مثال: ي101 أو ط105 أو د. هند" autocomplete="off">
+      <button class="circle" id="loc" aria-label="موقعي">◎</button>
+    </div>
+    <div id="cats"><button data-c="shop">🍽️ مطاعم ومقاهي</button><button data-c="doc">👩‍🏫 الدكاترة</button><button data-c="svc">🚻 الخدمات</button><button data-c="bld">🏢 المباني</button></div>
+    <div id="res"></div>
+    <div id="dir"></div>
+    <div id="floors"></div>
+    <div id="sheet"></div>
+  </div>
+</section>
+
+<div class="modal" id="tut"><div class="box">
+  <div class="ic" id="tI"></div><h2 id="tH"></h2><p id="tP" class="mut"></p>
+  <div class="dots" id="tD"></div>
+  <button class="btn" id="tN">التالي</button>
+</div></div>
+
+<div class="modal" id="perm"><div class="box">
+  <div class="ic">📍</div><h2>السماح بمعرفة موقعك</h2>
+  <p class="mut">نحتاج موقعك ليبدأ المسار من مكانك الحالي. يمكنك تخطي هذه الخطوة، وسنبدأ المسار من المدخل الرئيسي.</p>
+  <button class="btn" id="pOk">السماح</button>
+  <button class="btn ghost" id="pNo">ليس الآن</button>
+</div></div>
+
+<div id="toast"></div>
+
+<script>
+// ===== البيانات من المخططات: مبنى ي (أرضي/أول/ثاني) ومبنى ط (أول/ثاني) =====
+const FL={0:'الأرضي',1:'الأول',2:'الثاني'};
+const R=[],$=id=>document.getElementById(id);
+function M(f,name,x,y,w,h,ic,e,o){o=o||{};const r={floor:f,name,x,y,w,h,ic,bld:'ي',type:'hall',via:[],p:[x+w/2,y+h/2],num:(name.match(/\d+/)||[''])[0]};Object.assign(r,o);R.push(r);return r}
+const DN=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const tf=h=>{const H=Math.floor(h),m=Math.round((h-H)*60);return (H%12||12)+(m?':'+String(m).padStart(2,'0'):'')+(H>=12?' م':' ص')};
+const S=(f,t,d)=>[{d:d||[0,1,2,3,4],f,t}];
+const sText=s=>s.map(x=>(x.d.length===5&&x.d[0]===0&&x.d[4]===4?'الأحد–الخميس':x.d.map(i=>DN[i]).join(' و '))+': '+tf(x.f)+' – '+tf(x.t)).join('<br>');
+const isOpen=s=>{const n=new Date(),h=n.getHours()+n.getMinutes()/60;return s.some(x=>x.d.includes(n.getDay())&&h>=x.f&&h<x.t)};
+const SH=(desc,sch,menu)=>({type:'shop',desc,sch,menu,wa:'966500000000',web:'https://example.com'});
+const DOC=(name,spec,sch,mail)=>({type:'doc',name,spec,sch,mail});
+// الدور الأرضي (ي)
+M(0,'قاعة 005',38,72,200,198,'',0);
+M(0,'مصعد',238,72,108,128,'🛗',0,{type:'svc'});
+[['004',346,122],['003',468,122],['002',590,122],['001',712,112]].forEach(a=>M(0,'قاعة '+a[0],a[1],72,a[2],128,'',0));
+M(0,'معمل',824,72,126,128,'🧪',0,{type:'svc'});
+M(0,'مكتب شؤون الطلاب',950,72,248,396,'📝',0,{type:'svc'});
+M(0,'قاعة 006',38,288,132,104,'',0);
+M(0,'درج',38,392,132,123,'🪜',0,{type:'svc'});
+M(0,'مدخل رئيسي',30,832,116,108,'🚪',0,{type:'gate',p:[88,885]});
+M(0,'مخرج',1018,838,180,192,'🚪',0,{type:'gate'});
+M(0,'مطعم',38,1030,267,185,'🍽️',0,Object.assign(SH('وجبات غداء سريعة وساندويتشات وعصائر طازجة.',S(10,16),[['برجر دجاج',18],['ساندويتش شاورما',12],['وجبة كبسة',20],['سلطة',10],['عصير طازج',8]]),{p:[166,1122]}));
+M(0,'ميني ماركت',540,407,100,85,'🛒',0,SH('مواد غذائية ومستلزمات يومية.',S(8,20),[['مياه',1],['عصير',3],['شيبس',3],['ساندويتش',8],['أقلام وقرطاسية',5]]));
+M(0,'مقهى 1',764,445,102,85,'☕',0,SH('قهوة مختصة ومشروبات ساخنة وباردة.',S(7.5,21),[['قهوة مختصة',12],['لاتيه',14],['شاي',6],['كرواسون',9],['كيك',12]]));
+M(0,'مقهى 2',553,607,100,85,'☕',0,SH('قهوة ومشروبات وحلويات.',S(7.5,21),[['إسبريسو',9],['موكا',15],['كابتشينو',13],['كوكيز',6]]));
+M(0,'آيس كريم',775,655,102,85,'🍦',0,SH('آيس كريم ومثلجات.',S(10,22),[['آيس كريم',8],['مثلجات',12],['وافل',15]]));
+M(0,'منطقة جلوس',313,565,125,112,'🪑',0,{type:'svc'});
+M(0,'درج مركزي',536,780,98,88,'🪜',0,{type:'svc',p:[585,824]});
+M(0,'درج فرعي يمين',668,730,50,40,'',0,{type:'svc'});
+M(0,'درج فرعي يسار',463,730,50,40,'',0,{type:'svc'});
+// الدوران الأول والثاني (ي)
+function yFloor(f,o){
+  M(f,o.tl[0],38,72,192,136,o.tl[1],0,o.tl[2]);
+  M(f,'دورات مياه (علوي)',230,72,136,136,'🚻',0,{type:'svc'});
+  [[366,138],[504,134],[638,138],[776,149]].forEach((a,i)=>M(f,'قاعة '+o.top[i],a[0],72,a[1],136,'',0));
+  [[237,168],[405,163],[568,163],[731,162]].forEach((a,i)=>M(f,'قاعة '+(f*100+i+1),1062,a[0],136,a[1],'',0));
+  M(f,'مصعد',1062,893,136,112,'🛗',0,{type:'svc'});
+  M(f,o.br[0],990,1005,208,207,o.br[1]||'',0,o.br[2]);
+  [[873,117],[493,134],[352,141],[230,122]].forEach((a,i)=>M(f,'قاعة '+o.bot[i],a[0],1075,a[1],137,'',0));
+  M(f,'درج',750,1075,123,137,'🪜',0,{type:'svc'});
+  M(f,'دورات مياه (سفلي)',627,1075,123,137,'🚻',0,{type:'svc'});
+  M(f,'قاعة '+o.bl,38,1020,192,192,'',0);
+  [[265,130],[395,125],[520,123],[643,124],[767,126],[893,127]].forEach((a,i)=>M(f,'قاعة '+o.left[i],38,a[0],132,a[1],'',0));
+}
+yFloor(1,{tl:['استراحة الموظفات','🛋️',{type:'svc'}],top:[117,118,119,120],br:['قاعة 105'],bot:[106,107,108,109],bl:110,left:[116,115,114,113,112,111]});
+M(1,'درج مركزي',571,782,76,86,'🪜',0,{type:'svc',p:[609,825]});
+yFloor(2,{tl:['د. هند علي','👩‍🏫',DOC('د. هند علي','علوم الحاسب – الذكاء الاصطناعي',[{d:[0,2],f:10,t:12},{d:[1],f:13,t:14}],'hind.ali@uqu.edu.sa')],top:[216,217,218,219],br:['د. مريم أحمد','👩‍🏫',DOC('د. مريم أحمد','نظم المعلومات',[{d:[1,3],f:11,t:13},{d:[4],f:9,t:10}],'mariam.ahmed@uqu.edu.sa')],bot:[205,206,207,208],bl:209,left:[215,214,213,212,211,210]});
+// مبنى ط: الإحداثيات = المخطط (x-17 , y-983) ليتصل ببوابة ي
+function tFloor(f,doc){const b=f*100,T=(n,x,y,w,h,ic,o)=>M(f,n,x,y,w,h,ic,0,Object.assign({bld:'ط'},o));
+  [[-983,160,5],[-823,163,6],[-660,159,7],[-501,153,8]].forEach(a=>T('قاعة '+(b+a[2]),1063,a[0],115,a[1],'',{lab:'ط'+(b+a[2])}));
+  T('دورات مياه',1063,-348,115,135,'🚻',{type:'svc'});
+  T(doc.name,1063,-213,115,125,'👩‍🏫',doc);
+  T('قاعة '+(b+9),1063,-88,115,160,'',{lab:'ط'+(b+9)});
+  T('قاعة '+(b+4),663,-581,117,113,'',{lab:'ط'+(b+4)});
+  T('قاعة '+(b+3),663,-468,117,120,'',{lab:'ط'+(b+3)});
+  T('مصعد',663,-348,117,135,'🛗',{type:'svc'});
+  T('درج',663,-213,117,127,'🪜',{type:'svc'});
+  T('مصلى',720,-61,125,108,'🕌',{type:'svc'});}
+tFloor(1,DOC('د. أمل القرشي','تقنية المعلومات',[{d:[0,3],f:9,t:11},{d:[2],f:12,t:13}],'amal.q@uqu.edu.sa'));
+tFloor(2,DOC('د. ريم الشريف','تصميم وتجربة المستخدم',[{d:[1,4],f:12,t:14}],'reem.sh@uqu.edu.sa'));
+const FAC={'🛗':[S(7,17),'مصعد بين الأدوار'],'🚻':[S(6,22),'دورات مياه'],'🪜':[null,'درج بين الأدوار'],'🧪':[S(8,16),'معمل حاسب للطالبات'],'📝':[S(8,14),'استقبال استفسارات وخدمات الطالبات'],'🛋️':[S(7.5,15.5),'مخصصة للموظفات'],'🪑':[S(7,21),'منطقة جلوس ودراسة قرب المقاهي'],'🕌':[S(4.5,22),'مصلى النساء']};
+R.forEach(r=>{if(r.type==='svc'&&FAC[r.ic]){r.sch=FAC[r.ic][0];r.desc=FAC[r.ic][1]}});
+const CS=10,GW=124,GH=223,OY=1000;
+const WALLS0=[[345,383,848,383],[848,383,912,512],[912,512,912,780],[912,780,670,780],[500,780,282,780],[282,780,282,505],[465,718,715,718],[470,868,695,868]];
+const VOIDS={0:[[1018,468,180,370],[305,1030,893,185]],1:[[1062,72,136,165]],2:[[1062,72,136,165]]};
+const ATR=[[348,385],[848,385],[912,512],[912,780],[285,780],[285,512]];
+const TP=[[863,-983],[1178,-983],[1178,72],[663,72],[663,-581],[863,-581]];
+function pip(x,y,P){let c=false;for(let i=0,j=P.length-1;i<P.length;j=i++){if((P[i][1]>y)!==(P[j][1]>y)&&x<(P[j][0]-P[i][0])*(y-P[i][1])/(P[j][1]-P[i][1])+P[i][0])c=!c}return c}
+function mkGrid(f,free){
+  const g=new Uint8Array(GW*GH),cx=i=>i*CS+CS/2,cy=j=>j*CS+CS/2-OY;
+  for(let j=0;j<GH;j++)for(let i=0;i<GW;i++){const x=cx(i),y=cy(j),inY=x>=38&&x<=1198&&y>=72&&y<=1215;let ok=f===0?inY:(inY||pip(x,y,TP));if(!ok||(f>0&&pip(x,y,ATR)))g[j*GW+i]=1}
+  const fill=(r,v)=>{for(let j=Math.max(0,Math.floor((r[1]+OY)/CS));j<=Math.min(GH-1,Math.floor((r[1]+r[3]+OY)/CS));j++)for(let i=Math.max(0,Math.floor(r[0]/CS));i<=Math.min(GW-1,Math.floor((r[0]+r[2])/CS));i++){const x=cx(i),y=cy(j);if(x>=r[0]&&x<=r[0]+r[2]&&y>=r[1]&&y<=r[1]+r[3])g[j*GW+i]=v}};
+  const wall=l=>{const n=Math.ceil(Math.hypot(l[2]-l[0],l[3]-l[1])/3);for(let k=0;k<=n;k++){const i=Math.floor((l[0]+(l[2]-l[0])*k/n)/CS),j=Math.floor((l[1]+(l[3]-l[1])*k/n+OY)/CS);if(i>=0&&j>=0&&i<GW&&j<GH)g[j*GW+i]=1}};
+  R.filter(r=>r.floor===f).forEach(r=>fill([r.x,r.y,r.w,r.h],1));
+  VOIDS[f].forEach(v=>fill(v,1));
+  if(f===0)WALLS0.slice(0,6).forEach(wall);else{wall([38,72,962,72]);wall([1035,72,1198,72]);wall([923,2,923,72])}
+  free.forEach(r=>fill([r.x,r.y,r.w,r.h],0));
+  return g}
+function findRoute(A,B){
+  const g=mkGrid(A.floor,[A,B]),idx=p=>Math.floor((p[1]+OY)/CS)*GW+Math.floor(p[0]/CS),s=idx(A.p),t=idx(B.p);
+  if(g[s]||g[t])return null;
+  const D=new Float64Array(GW*GH).fill(1e9),P=new Int32Array(GW*GH).fill(-1),tx=t%GW,ty=(t/GW)|0,h=i=>Math.hypot(i%GW-tx,((i/GW)|0)-ty)*CS,H=[];
+  const push=a=>{H.push(a);let i=H.length-1;while(i>0){const p=(i-1)>>1;if(H[p][0]<=H[i][0])break;[H[p],H[i]]=[H[i],H[p]];i=p}};
+  const pop=()=>{const top=H[0],l=H.pop();if(H.length){H[0]=l;let i=0;for(;;){let a=2*i+1,b=a+1,m=i;if(a<H.length&&H[a][0]<H[m][0])m=a;if(b<H.length&&H[b][0]<H[m][0])m=b;if(m===i)break;[H[m],H[i]]=[H[i],H[m]];i=m}}return top};
+  D[s]=0;push([h(s),s,0]);
+  while(H.length){const e=pop(),u=e[1];if(e[2]>D[u])continue;if(u===t)break;const ux=u%GW,uy=(u/GW)|0;
+    for(let dx=-1;dx<=1;dx++)for(let dy=-1;dy<=1;dy++){if(!dx&&!dy)continue;const x=ux+dx,y=uy+dy;if(x<0||y<0||x>=GW||y>=GH)continue;const v=y*GW+x;if(g[v])continue;if(dx&&dy&&(g[uy*GW+x]||g[y*GW+ux]))continue;const nd=D[u]+(dx&&dy?14.14:10);if(nd<D[v]){D[v]=nd;P[v]=u;push([nd+h(v),v,nd])}}}
+  if(s!==t&&P[t]<0)return null;
+  const c=[];for(let i=t;i!==-1;i=P[i])c.push(i);
+  const pts=c.reverse().map(i=>[(i%GW)*CS+CS/2,((i/GW)|0)*CS+CS/2-OY]);pts[0]=A.p;pts[pts.length-1]=B.p;
+  const los=(a,b)=>{const n=Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/3);for(let k=0;k<=n;k++){if(g[idx([a[0]+(b[0]-a[0])*k/n,a[1]+(b[1]-a[1])*k/n])])return false}return true};
+  const out=[pts[0]];let i=0;while(i<pts.length-1){let j=pts.length-1;while(j>i+1&&!los(pts[i],pts[j]))j--;out.push(pts[j]);i=j}
+  return out}
+const path=(A,B)=>findRoute(A,B)||[A.p,B.p];
+const len=p=>p.reduce((a,q,i)=>i?a+Math.hypot(q[0]-p[i-1][0],q[1]-p[i-1][1]):0,0);
+const gs=(f,b,n)=>R.find(r=>r.floor===f&&r.bld===b&&r.name===(n||'درج'));
+const STP={0:[[gs(0,'ي','درج مركزي'),gs(1,'ي','درج مركزي')]],1:[[gs(1,'ي'),gs(2,'ي')],[gs(1,'ط'),gs(2,'ط')]]};
+function plan(s,r){
+  const segs={},add=(f,p)=>(segs[f]=segs[f]||[]).push(p);let cur=s,f=s.floor,tot=0;const dir=r.floor>f?1:-1,steps=[];
+  while(f!==r.floor){const nf=f+dir,pr=STP[Math.min(f,nf)].map(q=>dir>0?q:[q[1],q[0]]);let best=null;
+    pr.forEach(q=>{const a=path(cur,q[0]),c=len(a)+(nf===r.floor?len(path(q[1],r)):0);if(!best||c<best.c)best={a,q,c}});
+    add(f,best.a);tot+=len(best.a);cur=best.q[1];f=nf;steps.push(f)}
+  const last=path(cur,r);add(f,last);tot+=len(last);return {segs,tot,steps}}
+let floor=0,start=R.find(r=>r.name==='مدخل رئيسي'),sel=null,route=null;
+const svg=$('map'),vp=$('vp'),NS='http://www.w3.org/2000/svg';
+function el(t,a,p){const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);p&&p.appendChild(e);return e}
+function txt(g,x,y,t,sz,w){const e=el('text',{class:'lbl',x,y,style:`font-size:${sz}px;font-weight:${w||400}`},g);e.textContent=t}
+function draw(){
+  vp.innerHTML='';
+  const W=(a,b,c,d,s)=>el('line',{x1:a,y1:b,x2:c,y2:d,stroke:'var(--line)','stroke-width':s||6,'stroke-linecap':'round'},vp);
+  W(38,72,38,1215);W(38,1215,1198,1215);W(1198,1215,1198,72);
+  if(floor===0)W(38,72,1198,72);else{W(38,72,962,72);W(1035,72,1198,72)}
+  VOIDS[floor].forEach(v=>el('rect',{class:'hall',x:v[0],y:v[1],width:v[2],height:v[3]},vp));
+  txt(vp,200,50,'مبنى ي',30,700);
+  if(floor>0){
+    el('polygon',{points:TP.map(a=>a.join(',')).join(' '),fill:'var(--hall)',opacity:.35},vp);
+    W(863,-983,863,-581);W(863,-581,663,-581);W(663,-581,663,72);W(1178,-983,1178,72);W(923,2,923,72,4);
+    el('line',{x1:863,y1:-983,x2:1178,y2:-983,stroke:'var(--mut)','stroke-dasharray':'8 8','stroke-width':3},vp);
+    txt(vp,1020,-1000,'يمتد المبنى شمالاً',14);txt(vp,450,-800,'مبنى ط',48,700);txt(vp,998,38,'🚪 بوابة الربط بين ط و ي',14,600);
+    el('polygon',{points:ATR.map(a=>a.join(',')).join(' '),fill:'var(--hall)',stroke:'var(--line)','stroke-width':3},vp);txt(vp,600,590,'فناء مفتوح',26,600)}
+  else WALLS0.forEach(l=>el('line',{x1:l[0],y1:l[1],x2:l[2],y2:l[3],stroke:'var(--line)','stroke-width':4},vp));
+  R.filter(r=>r.floor===floor).forEach(r=>{
+    const g=el('g',{},vp),b=el('rect',{class:'rm'+(r.type==='shop'?' shop':r.type==='doc'?' doc':'')+(sel===r?' sel':''),x:r.x,y:r.y,width:r.w,height:r.h,rx:8,tabindex:0,role:'button','aria-label':r.name},g);
+    b.onclick=()=>pick(r);b.onkeydown=e=>e.key==='Enter'&&pick(r);
+    const cx=r.x+r.w/2,cy=r.y+r.h/2;
+    if(r.type==='hall'){txt(g,cx,cy+9,r.lab||r.num,r.lab?22:26,700)}
+    else{if(r.ic)txt(g,cx,cy-2,r.ic,r.w<90?20:32);if(r.w>=90)txt(g,cx,cy+(r.ic?26:5),r.name,r.w<110?12:15,600)}
+  });
+  if(route){(route.segs[floor]||[]).forEach(p=>el('polyline',{points:p.map(a=>a.join(',')).join(' '),fill:'none',stroke:'var(--route)','stroke-width':9,'stroke-linecap':'round','stroke-linejoin':'round','stroke-dasharray':'1 18'},vp))}
+  if(start.floor===floor)el('circle',{cx:start.p[0],cy:start.p[1],r:14,fill:'var(--route)',stroke:'#fff','stroke-width':5},vp)
+}
+// تكبير وتحريك
+let T={x:0,y:0,k:1},P=new Map(),last=null;
+function apply(){vp.setAttribute('transform',`translate(${T.x} ${T.y}) scale(${T.k})`)}
+function fit(){const w=svg.clientWidth,h=svg.clientHeight,y0=floor?-1020:40,H=1235-y0;T.k=Math.min(w/1240,h/H);T.x=(w-1240*T.k)/2;T.y=-y0*T.k+(h-H*T.k)/2;apply()}
+svg.addEventListener('pointerdown',e=>{P.set(e.pointerId,e);last=null});
+svg.addEventListener('pointermove',e=>{
+  if(!P.has(e.pointerId))return;const old=P.get(e.pointerId);P.set(e.pointerId,e);
+  if(P.size===1){T.x+=e.clientX-old.clientX;T.y+=e.clientY-old.clientY;apply()}
+  else if(P.size===2){const[a,b]=[...P.values()],d=Math.hypot(a.clientX-b.clientX,a.clientY-b.clientY);
+    if(last){const f=d/last,cx=(a.clientX+b.clientX)/2,cy=(a.clientY+b.clientY)/2,nk=Math.min(4,Math.max(.15,T.k*f)),r=nk/T.k;T.x=cx-(cx-T.x)*r;T.y=cy-(cy-T.y)*r;T.k=nk;apply()}last=d}
+});
+['pointerup','pointercancel','pointerleave'].forEach(n=>svg.addEventListener(n,e=>{P.delete(e.pointerId);last=null}));
+svg.addEventListener('wheel',e=>{e.preventDefault();const f=e.deltaY<0?1.1:.9,nk=Math.min(4,Math.max(.15,T.k*f)),r=nk/T.k;T.x=e.clientX-(e.clientX-T.x)*r;T.y=e.clientY-(e.clientY-T.y)*r;T.k=nk;apply()},{passive:false});
+// الأدوار والبطاقات
+function floorsUI(){const f=$('floors');f.innerHTML='';[2,1,0].forEach(n=>{const b=document.createElement('button');b.textContent=FL[n];b.className=n===floor?'on':'';b.onclick=()=>{floor=n;floorsUI();draw();fit()};f.appendChild(b)})}
+function zoomTo(x,y,k){T.k=k;T.x=svg.clientWidth/2-x*k;T.y=svg.clientHeight/2-y*k;apply()}
+const badge=(r)=>{if(!r.sch)return '<span class="badge ok">متاح دائماً</span>';const o=isOpen(r.sch);return `<span class="badge ${o?'ok':'no'}">${r.type==='doc'?(o?'في ساعاته المكتبية الآن':'خارج الساعات المكتبية'):(o?'مفتوح الآن':'مغلق الآن')}</span>`};
+function pick(r,foc){
+  sel=r;floor=r.floor;floorsUI();draw();const s=$('sheet');let h='';
+  if(r.type==='bld'){fit();zoomTo(r.p[0],r.p[1],r.bld==='ط'?.45:.55);h=`<h2>${r.name}</h2><p class="mut">${r.info}</p><div class="row"><button class="btn ghost" id="cl">إغلاق</button></div>`;s.innerHTML=h;s.classList.add('on');$('cl').onclick=()=>{s.classList.remove('on');sel=null;draw()};return}
+  if(foc)zoomTo(r.p[0],r.p[1],.9);
+  const loc=`مبنى ${r.bld} · ${FL[r.floor]}`;
+  if(r.type==='shop')h=`<div class="ph">${r.ic}</div><h2>${r.name}</h2>${badge(r)} <span class="mut">${loc}</span><p class="mut">${sText(r.sch)}</p><p>${r.desc}</p>${r.menu.map(m=>`<div class="mr"><span>${m[0]}</span><b>${m[1]} ر.س</b></div>`).join('')}<div class="row"><a class="btn ghost" style="text-decoration:none" href="https://wa.me/${r.wa}" target="_blank" rel="noopener">واتساب</a><a class="btn ghost" style="text-decoration:none" href="${r.web}" target="_blank" rel="noopener">الموقع</a></div><p class="mut">بيانات تجريبية</p>`;
+  else if(r.type==='doc')h=`<div class="ph">${r.ic}</div><h2>${r.name}</h2>${badge(r)}<p>التخصص: ${r.spec}</p><p class="mut">المكتب: ${loc}</p><p class="mut">الساعات المكتبية:<br>${sText(r.sch)}</p><p class="mut">${r.mail}</p><p class="mut">بيانات افتراضية للتجربة</p>`;
+  else if(r.desc)h=`<h2>${r.ic||''} ${r.name}</h2>${badge(r)} <span class="mut">${loc}</span><p>${r.desc}</p>${r.sch?`<p class="mut">${sText(r.sch)}</p>`:''}`;
+  else h=`<h2>${r.name}</h2><div class="mut">${loc}</div>`;
+  h+=`<div class="row"><button class="btn" id="go">المسار</button><button class="btn ghost" id="st">ابدأ من هنا</button><button class="btn ghost" id="cl">إغلاق</button></div>`;
+  s.innerHTML=h;s.classList.add('on');
+  $('go').onclick=()=>navTo(r);$('st').onclick=()=>{start=r;draw();toast('تم تحديد نقطة البداية: '+r.name)};
+  $('cl').onclick=()=>{s.classList.remove('on');sel=null;route=null;$('dir').style.display='none';draw()};
+}
+function navTo(r){
+  const s=start;if(s===r){toast('أنت هنا بالفعل');return}
+  const pl=plan(s,r);route={segs:pl.segs};
+  const m=Math.max(5,Math.round(pl.tot*.06/5)*5),d=$('dir');d.style.display='block';
+  d.textContent=`من ${s.name}${pl.steps.length?' ← الدرج ← الدور '+FL[r.floor]:''} ← ${r.name} (حوالي ${m} م، ${Math.max(1,Math.round(m/75))} د)`;
+  $('sheet').classList.remove('on');floor=s.floor;floorsUI();draw();
+  if(pl.steps.length)toast('المسار يكمل في الدور '+FL[r.floor]+' — بدّل الدور من الجانب',4000);
+}
+// البحث
+const norm=v=>v.trim().replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
+function match(v){v=norm(v);if(!v)return[];const m=v.match(/^([يط])\s*[-–]?\s*(\d+)$/),L=R.filter(r=>r.type!=='gate');if(m)return L.filter(r=>r.bld===m[1]&&r.num&&r.num.includes(m[2]));return L.filter(r=>r.name.includes(v)||(r.num&&r.num.includes(v))||(r.spec&&r.spec.includes(v)))}
+function showList(L){const b=$('res');b.innerHTML=L.slice(0,14).map((r,i)=>`<button data-i="${i}">${r.ic||''} ${r.name} <span class="mut">${r.type==='bld'?'':'· مبنى '+r.bld+' · '+FL[r.floor]}</span></button>`).join('')||'<button>لا توجد نتائج</button>';b.style.display='block';b.querySelectorAll('[data-i]').forEach(x=>x.onclick=()=>{b.style.display='none';$('q').value='';pick(L[x.dataset.i],true)})}
+$('q').oninput=e=>{const v=e.target.value,b=$('res');if(!v.trim()){b.style.display='none';return}showList(match(v))};
+const BLD=[{name:'مبنى ي',ic:'🏢',floor:0,p:[618,640],bld:'ي',type:'bld',info:'ثلاثة أدوار: الأرضي (مطعم ومقاهي وميني ماركت)، الأول، والثاني (مكاتب الدكاترة).'},{name:'مبنى ط',ic:'🏢',floor:1,p:[920,-420],bld:'ط',type:'bld',info:'دوران: الأول والثاني، فيهما قاعات ومكاتب ومصلى. يتصل بمبنى ي ببوابة واحدة من الجهة الشمالية.'}];
+document.querySelectorAll('#cats button').forEach(b=>b.onclick=()=>{const c=b.dataset.c;showList(c==='bld'?BLD:R.filter(r=>c==='svc'?(r.type==='svc'&&r.desc):r.type===c))});
+function toast(t,ms){const e=$('toast');e.textContent=t;e.style.display='block';setTimeout(()=>e.style.display='none',ms||3500)}
+// الشرح
+const TUT=[['👆','تحريك الخريطة','حرّك إصبعًا واحدًا للتنقل في المبنى.'],['🤏','التكبير','استخدم إصبعين للتكبير والتصغير.'],['📌','اختيار مكان','اضغط على قاعة أو مكتب أو محل ثم اضغط «المسار». أو اكتب رقم القاعة في البحث، مثل ي101 أو ط105.'],['🏢','المباني والأدوار','بدّل بين الأدوار من الأزرار على الجانب. مبنى ط يظهر فوق مبنى ي في الدورين الأول والثاني، ويتصل به ببوابة واحدة.']];
+let ti=0;
+function tut(){const [i,h,p]=TUT[ti];$('tI').textContent=i;$('tH').textContent=h;$('tP').textContent=p;$('tD').innerHTML=TUT.map((_,k)=>`<i class="${k===ti?'on':''}"></i>`).join('');$('tN').textContent=ti===TUT.length-1?'فهمت':'التالي'}
+$('start').onclick=()=>{$('splash').classList.remove('on');$('app').classList.add('on');floorsUI();draw();fit();ti=0;tut();$('tut').classList.add('on')};
+$('tN').onclick=()=>{if(ti<TUT.length-1){ti++;tut()}else{$('tut').classList.remove('on');$('perm').classList.add('on')}};
+$('pNo').onclick=()=>$('perm').classList.remove('on');
+function ask(){if(!navigator.geolocation){toast('الموقع غير مدعوم');return}
+  navigator.geolocation.getCurrentPosition(()=>toast('تم تحديد موقعك. نقطة البداية داخل المبنى تبدأ من المدخل حاليًا.'),()=>toast('لم يُسمح بالموقع. سنبدأ من المدخل.'))}
+$('pOk').onclick=()=>{$('perm').classList.remove('on');ask()};
+$('loc').onclick=ask;
+addEventListener('resize',fit);
+</script>
+</body>
+</html>
